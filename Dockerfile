@@ -1,7 +1,7 @@
 # Backend confing
 FROM oven/bun:latest
 
-WORKDIR /backend/
+WORKDIR /app/backend/
 
 COPY backend/package.json ./
 COPY backend/bun.lock ./
@@ -9,8 +9,6 @@ COPY backend/src ./
 COPY backend/index.ts ./
 
 RUN bun install
-
-COPY . .
 
 EXPOSE 3000
 
