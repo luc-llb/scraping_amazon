@@ -36,15 +36,15 @@ bun run index.ts
 ## More info
 The API will be available at `http://localhost:3000`.
 
-If you too are using Docker and don'r have the Bun installed on you machine, this is a preseet that can is vety useful for **manually installing packages**:
+If you too are using Docker and don'r have the Bun installed on you machine, this is a preseet that can be very useful for using Bun commands:
 
 ```bash
 cd backend/
-alias ADD='docker run --rm -it \
+alias bun='docker run --rm -it \
   -v $(pwd):/app \
   -w /app \
   oven/bun:latest \
-  bun add'
+  bun'
 ```
 
 ---
@@ -85,13 +85,13 @@ bun run index.ts
 ## Mais informações
 A API estará disponível em `http://localhost:3000`.
 
-Se você também estiver usando Docker e não tiver o Bun instalado em sua máquina, este é um preset que pode ser muito útil para **instalar pacotes manualmente**:
+Se você também estiver usando Docker e não tiver o Bun instalado em sua máquina, este é um preset que pode ser muito útil para utilizar os comandos do Bun:
 
 ```bash
 cd backend/
-alias ADD='docker run --rm -it \
+alias bun='docker run --rm -it \
   -v $(pwd):/app \
   -w /app \
   oven/bun:latest \
-  bun add'
+  bun'
 ```
