@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { Axios } from "axios";
 
 /**
  * Sets the header type to allow generic headers like mozilaHeader
@@ -35,9 +35,12 @@ async function getData(url: string, header: Header)
 {
     try{
         const response = await axios.get(url, {
-            headers: header
+            headers: header,
+            maxRedirects: 5,
+            validateStatus: (status) => {return true;},
+            timeout: 30000
         });
-        return response.data;
+        return response;
     }catch( error ){
         if (error instanceof Error){
             console.warn(error.message, `\n[${url}]`);
@@ -46,7 +49,46 @@ async function getData(url: string, header: Header)
         {
             console.warn("Erro desconhecido", `\n[${url}]`);
         }
+        return "--Error fetching data--";
     }
+}
+
+/**
+ * Function to get cookies from a URL
+ * @param url The URL to fetch cookies from
+ * @returns Array of cookies or empty string if not found
+ */
+async function getCookies(url: string): Promise<string[] | string> 
+{
+    const response = await getData(encodeURI(url), mozillaHeader);
+    
+    if (typeof response === "string") {
+        return "";
+    }
+    
+    try{
+        const cookies = response.headers["set-cookie"];
+        return cookies || ""; 
+    }
+    catch (error) {
+        console.error("Erro ao obter cookies:", error);
+        return "";
+    }
+}
+
+/**
+ * Function that processes Cookies to used them in headers
+ * @param cookies Array with cookies obtained from a page
+ * @returns String with the cookies
+ */
+function processCookies(cookies: string[]): string
+{
+    if (Array.isArray(cookies) && cookies.length > 0) {
+        const setCookie = cookies.map(c => c.split(";")[0]);
+        return setCookie.join("; ");
+    } 
+
+    return "";
 }
 
 /**
@@ -54,9 +96,26 @@ async function getData(url: string, header: Header)
  * @param keyWord - The keyword to search for on Amazon
  * @param header - Optional custom headers to use for the request
  */
-export default function getAmazonContent(keyWord: string, header?: Header)
+export default async function getAmazonContent(keyWord: string, header?: Header)
 {
+    const cookies = await getCookies("https://www.amazon.com/");
+
+    if (Array.isArray(cookies)) {
+        const cookiesFormated = processCookies(cookies);
+        if (header) {
+            header["Cookie"] = cookiesFormated;
+        } else {
+            mozillaHeader["Cookie"] = cookiesFormated;
+        }
+    }
+
     const uriValue = encodeURIComponent(keyWord);
-    return getData(`https://www.amazon.com/s?k=${uriValue}&sprefix=${uriValue}`, 
+    const response = await getData(`https://www.amazon.com/s?k=${uriValue}&sprefix=${uriValue}`, 
         header ?? mozillaHeader);
+
+    if(typeof response === "string"){
+        return response;
+    }else{
+        return response.data;
+    }
 }
