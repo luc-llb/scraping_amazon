@@ -92,7 +92,7 @@ export const headerAgents: Header[] = [
  * Função para obter um header aleatório
  */
 export function getRandomHeaderAgent(): Header {
-  return !headerAgents[randomInt(0, headerAgents.length)];
+    return headerAgents[randomInt(0, headerAgents.length)];
 }
 
 /**
@@ -170,11 +170,11 @@ function processCookies(cookies: string[]): string
 export default async function getAmazonContent(keyWord: string, header?: Header): Promise<string>
 {
     let currentHeader = header ?? getRandomHeaderAgent();
-    const cookies = await getCookies("https://www.amazon.com/", currentHeader);
+    /*const cookies = await getCookies("https://www.amazon.com/", currentHeader);
     console.log(cookies);
     if (Array.isArray(cookies)) {
         currentHeader["Cookie"] = processCookies(cookies);
-    }
+    }*/
     
     const uriValue = encodeURIComponent(keyWord);
     const response = await fetchData(`https://www.amazon.com/s?k=${uriValue}&sprefix=${uriValue}`, currentHeader);
