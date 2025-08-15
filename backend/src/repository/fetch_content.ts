@@ -1,5 +1,7 @@
 import axios from "axios";
 import { randomInt } from "crypto";
+import { salvarJSON, salvarPagina } from "./utils.js";
+import { AdvancedSessionManager, RecaptchaBypassError } from "./teste.js";
 
 /**
  * Sets the header type to allow generic headers like mozilaHeader
@@ -9,90 +11,36 @@ type Header = { [key: string]: string }
 /**
  * Array de headers simulando diferentes navegadores
  */
-export const headerAgents: Header[] = [
-    {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-        "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-        "referer": "https://www.google.com/",
-        "sec-ch-ua": '"Chromium";v="121", "Google Chrome";v="121", "Not/A)Brand";v="99"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Windows"',
-        "sec-fetch-dest": "document",
-        "sec-fetch-mode": "navigate",
-        "sec-fetch-site": "none",
-        "sec-fetch-user": "?1",
-        "cache-control": "max-age=0",
-        "upgrade-insecure-requests": "1",
-        "pragma": "no-cache",
-        "Connection": "keep-alive",
-        "DNT": "1",
-        "TE": "Trailers"
-    },
-    {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "referer": "https://www.bing.com/",
-        "sec-ch-ua": '"Not/A)Brand";v="99", "Safari";v="17", "AppleWebKit";v="605"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"macOS"',
-        "sec-fetch-dest": "document",
-        "sec-fetch-mode": "navigate",
-        "sec-fetch-site": "none",
-        "sec-fetch-user": "?1",
-        "cache-control": "max-age=0",
-        "upgrade-insecure-requests": "1",
-        "pragma": "no-cache",
-        "Connection": "keep-alive",
-        "DNT": "1",
-        "TE": "Trailers"
-    },
-    {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
-        "Accept-Language": "en-US,en;q=0.5",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "referer": "https://duckduckgo.com/",
-        "sec-ch-ua": '"Not/A)Brand";v="99", "Firefox";v="125", "Gecko";v="20100101"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Windows"',
-        "sec-fetch-dest": "document",
-        "sec-fetch-mode": "navigate",
-        "sec-fetch-site": "none",
-        "sec-fetch-user": "?1",
-        "cache-control": "max-age=0",
-        "upgrade-insecure-requests": "1",
-        "pragma": "no-cache",
-        "Connection": "keep-alive",
-        "DNT": "1",
-        "TE": "Trailers"
-    },
-    {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-        "Accept-Language": "en-US,en;q=0.9",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "referer": "https://www.yahoo.com/",
-        "sec-ch-ua": '"Chromium";v="121", "Google Chrome";v="121", "Not/A)Brand";v="99"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Linux"',
-        "sec-fetch-dest": "document",
-        "sec-fetch-mode": "navigate",
-        "sec-fetch-site": "none",
-        "sec-fetch-user": "?1",
-        "cache-control": "max-age=0",
-        "upgrade-insecure-requests": "1",
-        "pragma": "no-cache",
-        "Connection": "keep-alive",
-        "DNT": "1",
-        "TE": "Trailers"
-    }
-];
+export const headerAgents: string[] = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        ];
 
 /**
  * Função para obter um header aleatório
  */
 export function getRandomHeaderAgent(): Header {
-    return headerAgents[randomInt(0, headerAgents.length)];
+    const userAgent = headerAgents[randomInt(0, headerAgents.length)] ?? "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36";
+
+    return {
+            'User-Agent': userAgent,
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'DNT': '1',
+            'Connection': 'keep-alive',
+            'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Cache-Control': 'max-age=0',
+            'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"'
+    };
 }
 
 /**
@@ -134,12 +82,14 @@ async function getCookies(url: string, header: Header): Promise<string[] | strin
     const response = await fetchData(encodeURI(url), header);
     
     if (typeof response === "string") {
+        console.log("Error fetching cookies");
         return "";
     }
     
     try{
-        const cookies = response.headers["set-cookie"];
-        return cookies || ""; 
+        salvarPagina(response.data);
+        const cookies = response.headers["set-cookie"] ?? "";
+        return cookies; 
     }
     catch (error) {
         console.error("Erro ao obter cookies:", error);
@@ -163,25 +113,123 @@ function processCookies(cookies: string[]): string
 }
 
 /**
- * Function responsible to fetch the data from Amazon
+ * Function responsible to fetch the data from Amazon using advanced session management
  * @param keyWord - The keyword to search for on Amazon
  * @param header - Optional custom headers to use for the request
+ * @param useAdvancedBypass - Whether to use advanced reCAPTCHA bypass techniques
  */
-export default async function getAmazonContent(keyWord: string, header?: Header): Promise<string>
+export default async function getAmazonContent(keyWord: string, header?: Header, useAdvancedBypass: boolean = true): Promise<string>
 {
+    const uriValue = encodeURIComponent(keyWord);
+    const searchUrl = `https://www.amazon.com/s?k=${uriValue}&sprefix=${uriValue}`;
+
+    if (useAdvancedBypass) {
+        console.log("Usando AdvancedSessionManager para bypass de proteções...");
+        
+        try {
+            const sessionManager = new AdvancedSessionManager();
+            
+            // Primeiro, simula uma sessão de navegação completa
+            await sessionManager.simulateBrowsingSession("https://www.amazon.com");
+            
+            // Depois faz a requisição com técnicas de bypass
+            const response = await sessionManager.makeStealthRequest(searchUrl, {
+                useRandomDelay: true,
+                useRandomHeaders: true,
+                maxRetries: 5
+            });
+
+            if (response && response.data) {
+                console.log("Dados obtidos com sucesso usando AdvancedSessionManager!");
+                salvarPagina(response.data);
+                return response.data;
+            }
+            
+        } catch (error) {
+            if (error instanceof RecaptchaBypassError) {
+                console.warn("AdvancedSessionManager falhou com reCAPTCHA. Tentando método tradicional...");
+            } else {
+                console.warn("AdvancedSessionManager falhou:", error instanceof Error ? error.message : error);
+            }
+            
+            // Fallback para o método tradicional
+            console.log("Fazendo fallback para método tradicional...");
+        }
+    }
+
+    // Método tradicional como fallback
+    console.log("Usando método tradicional...");
     let currentHeader = header ?? getRandomHeaderAgent();
-    /*const cookies = await getCookies("https://www.amazon.com/", currentHeader);
-    console.log(cookies);
-    if (Array.isArray(cookies)) {
-        currentHeader["Cookie"] = processCookies(cookies);
-    }*/
     
+    const response = await fetchData(searchUrl, currentHeader);
+
+    if(typeof response === "string"){
+        return response;
+    } else {
+        salvarPagina(response.data);
+        return response.data;
+    }
+}
+
+/**
+ * Function to force use of only the AdvancedSessionManager
+ * @param keyWord - The keyword to search for on Amazon
+ * @returns Promise with the fetched data or error message
+ */
+export async function getAmazonContentAdvanced(keyWord: string): Promise<string> {
+    const uriValue = encodeURIComponent(keyWord);
+    const searchUrl = `https://www.amazon.com/s?k=${uriValue}&sprefix=${uriValue}`;
+
+    try {
+        console.log("Usando apenas AdvancedSessionManager...");
+        const sessionManager = new AdvancedSessionManager();
+        
+        // Simula sessão de navegação completa
+        await sessionManager.simulateBrowsingSession("https://www.amazon.com");
+        
+        // Faz a requisição principal
+        const response = await sessionManager.makeStealthRequest(searchUrl, {
+            useRandomDelay: true,
+            useRandomHeaders: true,
+            maxRetries: 5
+        });
+
+        if (response && response.data) {
+            console.log("Dados obtidos com sucesso!");
+            salvarPagina(response.data);
+            return response.data;
+        } else {
+            throw new Error("Resposta vazia ou inválida");
+        }
+        
+    } catch (error) {
+        if (error instanceof RecaptchaBypassError) {
+            console.error("Falha no bypass de reCAPTCHA:", error.message);
+            return "--Error: reCAPTCHA não pôde ser contornado--";
+        } else {
+            console.error("Erro no AdvancedSessionManager:", error instanceof Error ? error.message : error);
+            return "--Error fetching data with AdvancedSessionManager--";
+        }
+    }
+}
+
+/**
+ * Function to use traditional method only (without AdvancedSessionManager)
+ * @param keyWord - The keyword to search for on Amazon
+ * @param header - Optional custom headers to use for the request
+ * @returns Promise with the fetched data or error message
+ */
+export async function getAmazonContentTraditional(keyWord: string, header?: Header): Promise<string> {
+    console.log("Usando apenas método tradicional...");
+    
+    let currentHeader = header ?? getRandomHeaderAgent();
     const uriValue = encodeURIComponent(keyWord);
     const response = await fetchData(`https://www.amazon.com/s?k=${uriValue}&sprefix=${uriValue}`, currentHeader);
 
     if(typeof response === "string"){
         return response;
-    }else{
+    } else {
+        salvarPagina(response.data);
         return response.data;
     }
 }
