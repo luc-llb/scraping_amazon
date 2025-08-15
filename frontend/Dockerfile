@@ -2,7 +2,7 @@ FROM oven/bun:latest
 
 WORKDIR /app
 
-COPY package.json bun.lock ts.config ./
+COPY package.json bun.lock ./
 COPY index.html ./
 COPY src ./src
 COPY public ./public
