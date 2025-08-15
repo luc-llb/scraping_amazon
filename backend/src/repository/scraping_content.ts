@@ -5,8 +5,8 @@ import { JSDOM } from "jsdom";
  */
 export interface AmazonProduct {
   title: string;
-  price: string;
-  link: string;
+  rating: number;
+  reviews: number;
   image: string;
 }
 
