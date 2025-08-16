@@ -5,7 +5,7 @@ import { JSDOM } from "jsdom";
  */
 export interface AmazonProduct {
   title: string;
-  rating: number;
+  rating: string;
   reviews: number;
   image: string;
 }
@@ -19,10 +19,9 @@ const dataProps: {[key: string] : string} = {
     "container-items-2": '[cel_widget_id="MAIN-SEARCH_RESULTS-42"]',
     "item-name-1": 'h2.a-size-medium.a-spacing-none.a-color-base.a-text-normal',
     "item-name-2": 'h2.a-size-base-plus.a-spacing-none.a-color-base.a-text-normal',
-    "price-inter": '.a-price-whole',
-    "price-fraction": '.a-price-fraction',
+    "item-review": 'span.a-size-base.s-underline-text',
     "item-image": 'div.a-section.aok-relative.s-image-square-aspect img.s-image',
-    "item-link": 'a.a-link-normal.s-line-clamp-4.s-link-style.a-text-normal'
+    "item-rating": 'span.a-icon-alt'
 };
 
 /**
@@ -59,28 +58,23 @@ function itemsToJSON(items: Element[]): AmazonProduct[] {
         const titleElement = element.querySelector(titleSelector1) || element.querySelector(titleSelector2);
         const title = titleElement ? titleElement.textContent?.trim() ?? "" : "";
 
-        // Link
-        const linkSelector = dataProps["item-link"] ?? "";
-        const linkElement = element.querySelector(linkSelector);
-        const link = linkElement ? "https://www.amazon.com" + linkElement.getAttribute("href") : "";
+        // ratin
+        const ratingSelector = dataProps["item-rating"] ?? "";
+        const ratingElement = element.querySelector(ratingSelector);
+        const rating = ratingElement ? ratingElement.textContent.trim() : "";
 
         // Image
         const imageSelector = dataProps["item-image"] ?? "";
         const imageElement = element.querySelector(imageSelector);
         const image = imageElement ? imageElement.getAttribute("src") ?? "" : "";
 
-        // Price
-        const priceWholeSelector = dataProps["price-inter"] ?? "";
-        const priceFractionSelector = dataProps["price-fraction"] ?? "";
-        const priceWhole = element.querySelector(priceWholeSelector);
-        const priceFraction = element.querySelector(priceFractionSelector);
-        let price = "";
-        if (priceWhole && priceFraction) {
-            price = `${priceWhole.textContent?.trim() ?? ""}${priceFraction.textContent?.trim() ?? ""}`;
-        }
+        // review
+        const reviewSelector = dataProps["item-review"] ?? "";
+        const reviewElement = element.querySelector(reviewSelector);
+        const reviews = reviewElement ? parseInt(reviewElement.textContent.trim()) ?? 0 : 0;
 
-        if (title && link) {
-            products.push({ title, price, link, image });
+        if (title) {
+            products.push({ title, rating, reviews, image });
         }
     });
 

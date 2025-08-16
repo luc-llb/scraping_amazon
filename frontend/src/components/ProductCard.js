@@ -9,13 +9,13 @@ export class ProductCard {
         card.innerHTML = `
             <div class="product-image">
                 <img src=${this.escapeHtml(this.product.image)} 
-                        alt="Imagem do produto ${this.product.title} da categoria ${this.product.review} com design moderno e elegante" 
+                        alt="Imagem do produto ${this.product.title} da categoria ${this.product.reviews} com design moderno e elegante" 
                         onerror="this.style.display='none'">
             </div>
             <h3 class="product-name">${this.escapeHtml(this.product.title)}</h3>
-            <p class="product-description">${this.escapeHtml(this.product.review)}</p>
+            <p class="product-description">${this.escapeHtml(this.product.reviews)}</p>
             <div class="product-meta">
-                <span class="product-price">${this.escapeHtml(this.product.price)}</span>
+                <span class="product-price">${this.escapeHtml(this.product.rating)}</span>
             </div>
         `;
         return card;
