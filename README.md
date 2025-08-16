@@ -71,6 +71,17 @@ alias bun='docker run --rm -it \
   bun'
 ```
 
+## 🐳 Dev Container Support
+
+This project includes a `devcontainer.json` file to streamline development in GitHub Codespaces or any environment that supports Dev Containers. The configuration ensures **port forwarding**, automatically exposes ports `3000` (backend) and `5173` (frontend).
+
+### How to Use
+1. Open the project in VS Code.
+2. Press `F1` and select **Dev Containers: Rebuild and Reopen in Container**.
+3. The environment will be set up automatically, and you can start coding immediately.
+
+For more details, see the [Dev Containers documentation](https://code.visualstudio.com/docs/devcontainers/containers).
+
 ## 📡 API Endpoints
 - `GET /health` - Health check endpoint
 - `GET /api/scrape?keyword=<search_term>` - Search products by keyword
@@ -189,6 +200,17 @@ alias bun='docker run --rm -it \
   oven/bun:latest \
   bun'
 ```
+
+## 🐳 Suporte a Dev Container
+
+Este projeto inclui um arquivo `devcontainer.json` para agilizar o desenvolvimento no GitHub Codespaces ou em qualquer ambiente que suporte Dev Containers. A configuração garante o **encaminhamento de porta**, expondo automaticamente as portas `3000` (backend) e `5173` (frontend).
+
+### Como Usar
+1. Abra o projeto no VS Code.
+2. Pressione `F1` e selecione **Dev Containers: Rebuild and Reopen in Container**.
+3. O ambiente será configurado automaticamente, e você pode começar a codar imediatamente.
+
+Para mais detalhes, consulte a [documentação do Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers).
 
 ## 📡 Endpoints da API
 - `GET /health` - Endpoint de verificação de saúde
