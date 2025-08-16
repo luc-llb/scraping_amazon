@@ -1,5 +1,6 @@
 import { App } from './components/App.js'
 
-const appContainer = document.getElementById('app')
-const app = new App(appContainer)
-app.init()
+// Aguarda o DOM estar carregado
+document.addEventListener('DOMContentLoaded', () => {
+    const app = new App();
+});

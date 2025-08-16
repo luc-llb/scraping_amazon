@@ -115,6 +115,7 @@ export class App {
 
     showError(message) {
         this.clearError();
+        this.errorContainer.style.display = 'block';
         const errorMessage = new ErrorMessage(message);
         this.errorContainer.appendChild(errorMessage.render());
     }
