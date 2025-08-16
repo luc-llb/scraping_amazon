@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Produtos - API App</title>
+    <link rel="stylesheet" href="src/style.css"> 
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Catálogo de Produtos</h1>
+            <p>Pesquise e explore nossa coleção de produtos incríveis</p>
+        </header>
+
+        <div class="search-container">
+            <form class="search-form" id="searchForm">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput" 
+                    placeholder="Digite o nome do produto que você está procurando..."
+                    autocomplete="off"
+                >
+                <button type="submit" class="search-button" id="searchButton">
+                    Pesquisar
+                </button>
+            </form>
+        </div>
+
+        <div id="loadingIndicator" class="loading" style="display: none;">
+            Carregando produtos...
+        </div>
+
+        <div id="errorContainer"></div>
+
+        <div id="resultsContainer" class="results-container" style="display: none;">
+            <div class="results-header">
+                <h2 class="results-title">Resultados da Pesquisa</h2>
+                <span class="results-count" id="resultsCount">0 produtos encontrados</span>
+            </div>
+            <div class="products-grid" id="productsGrid"></div>
+        </div>
+    </div>
+    
+    <script type="module" src="src/main.js"></script>
+    </body>
+</html>
