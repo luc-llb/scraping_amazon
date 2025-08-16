@@ -29,7 +29,6 @@ app.use(express.json());
 // Middleware de log para debug
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-  console.log('Headers:', req.headers);
   next();
 });
 
