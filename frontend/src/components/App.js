@@ -86,7 +86,7 @@ export class App {
             const noResults = new NoResults(query);
             this.productsGrid.appendChild(noResults.render());
         } else {
-            products.forEach(product => {
+            products.forEach((product, index) => {
                 const productCard = new ProductCard(product);
                 this.productsGrid.appendChild(productCard.render());
             });
